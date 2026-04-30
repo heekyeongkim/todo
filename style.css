@@ -1,0 +1,325 @@
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f4ef;
+  --text-primary: #2c2c2a;
+  --text-secondary: #5f5e5a;
+  --text-tertiary: #888780;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-hover: rgba(0, 0, 0, 0.2);
+  --accent: #2c2c2a;
+  --danger-bg: #fcebeb;
+  --danger-text: #791f1f;
+  --warning-bg: #faeeda;
+  --warning-text: #633806;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1f1f1e;
+    --bg-secondary: #2c2c2a;
+    --text-primary: #f1efe8;
+    --text-secondary: #b4b2a9;
+    --text-tertiary: #888780;
+    --border: rgba(255, 255, 255, 0.12);
+    --border-hover: rgba(255, 255, 255, 0.25);
+    --accent: #f1efe8;
+    --danger-bg: #501313;
+    --danger-text: #f7c1c1;
+    --warning-bg: #412402;
+    --warning-text: #fac775;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+    "Malgun Gothic", sans-serif;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* App container */
+.todo-app {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 0.5px solid var(--border);
+  padding: 2rem;
+}
+
+/* Header */
+.todo-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.todo-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.todo-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Input row */
+.todo-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.todo-input-row input[type="text"] {
+  flex: 1;
+}
+
+.todo-input-row input[type="date"] {
+  width: 140px;
+}
+
+input[type="text"],
+input[type="date"] {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input[type="text"]:hover,
+input[type="date"]:hover {
+  border-color: var(--border-hover);
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#add-btn {
+  height: 36px;
+  padding: 0 18px;
+  font-size: 14px;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: opacity 0.15s, transform 0.05s;
+}
+
+#add-btn:hover {
+  opacity: 0.85;
+}
+
+#add-btn:active {
+  transform: scale(0.97);
+}
+
+/* Filters */
+.todo-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: transparent;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.filter-btn:hover {
+  background: var(--bg-secondary);
+}
+
+.filter-btn.active {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+/* Todo list */
+.todo-list {
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  background: var(--bg-primary);
+  transition: opacity 0.15s;
+}
+
+.todo-item.done {
+  opacity: 0.55;
+}
+
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 0.5px solid var(--border-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.todo-checkbox.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.todo-checkbox.checked::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid var(--bg-primary);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.todo-due {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.todo-due.overdue {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.todo-due.today {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.todo-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 20px;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.todo-delete:hover {
+  color: var(--danger-text);
+}
+
+.todo-empty {
+  text-align: center;
+  padding: 2.5rem 0;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+/* Footer */
+.todo-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 0.5px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.clear-btn:hover {
+  color: var(--danger-text);
+  background: var(--bg-secondary);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .todo-app {
+    padding: 1.25rem;
+  }
+
+  .todo-input-row {
+    flex-wrap: wrap;
+  }
+
+  .todo-input-row input[type="text"] {
+    flex: 1 1 100%;
+  }
+
+  .todo-input-row input[type="date"] {
+    flex: 1;
+    width: auto;
+  }
+}

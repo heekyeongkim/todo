@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>할일 목록</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="todo-app">
+    <header class="todo-header">
+      <h1 class="todo-title">할일 목록</h1>
+      <span class="todo-count" id="count">0개의 할일</span>
+    </header>
+
+    <div class="todo-input-row">
+      <input type="text" id="new-todo" placeholder="새로운 할일을 입력하세요..." />
+      <input type="date" id="new-date" />
+      <button id="add-btn">추가</button>
+    </div>
+
+    <div class="todo-filters">
+      <button class="filter-btn active" data-filter="all">전체</button>
+      <button class="filter-btn" data-filter="active">진행중</button>
+      <button class="filter-btn" data-filter="done">완료</button>
+    </div>
+
+    <ul class="todo-list" id="list"></ul>
+
+    <footer class="todo-footer">
+      <span id="remaining">0개 남음</span>
+      <button class="clear-btn" id="clear-done">완료된 항목 삭제</button>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
