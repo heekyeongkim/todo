@@ -19,6 +19,9 @@
     --red: #b52a2a;
     --red-dark: #9e2222;
     --red-soft: #a04b3b;
+    --green: #2e7d4f;
+    --amber-bg: #fdf3e3;
+    --amber-border: #ecd9b0;
     --radius-lg: 18px;
     --radius-md: 12px;
     --radius-sm: 9px;
@@ -36,7 +39,6 @@
 
   .container { max-width: 1080px; margin: 0 auto; }
 
-  /* ── 상단 배지 ─────────────────────────── */
   .badge {
     display: inline-flex;
     align-items: center;
@@ -51,7 +53,6 @@
   }
   .badge .dot { color: var(--red); font-size: 14px; }
 
-  /* ── 히어로 ────────────────────────────── */
   .hero h1 {
     font-family: "Noto Serif KR", "Nanum Myeongjo", serif;
     font-weight: 900;
@@ -68,13 +69,39 @@
   }
   .hero p strong { color: var(--ink); }
 
-  /* ── 메인 그리드 ───────────────────────── */
+  /* 기대치 2단 안내 (A-1) */
+  .expectation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 22px;
+    max-width: 760px;
+  }
+  @media (max-width: 640px) { .expectation { grid-template-columns: 1fr; } }
+  .expectation .col {
+    border-radius: var(--radius-md);
+    padding: 13px 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .expectation .can {
+    background: #eef5ef;
+    border: 1px solid #cfe2d4;
+  }
+  .expectation .human {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+  }
+  .expectation .col b { display: block; margin-bottom: 4px; font-size: 13.5px; }
+  .expectation .can b { color: var(--green); }
+  .expectation .human b { color: #9a6b1f; }
+
   .main-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
     gap: 26px;
     align-items: start;
-    margin-top: 34px;
+    margin-top: 30px;
   }
   @media (max-width: 860px) { .main-grid { grid-template-columns: 1fr; } }
 
@@ -85,7 +112,6 @@
     box-shadow: 0 2px 10px rgba(90, 70, 40, 0.05);
   }
 
-  /* ── 입력 카드 ─────────────────────────── */
   .form-card { padding: 22px 26px 26px; }
 
   .form-header {
@@ -135,15 +161,26 @@
   }
   textarea { min-height: 170px; resize: vertical; }
 
+  .field.invalid input[type="text"], .field.invalid textarea { border-color: var(--red); background: #fdf4f2; }
+  .field-error {
+    display: none;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--red);
+    line-height: 1.6;
+  }
+  .field.invalid .field-error { display: block; }
+
   .char-count {
     text-align: right;
     font-size: 12px;
     color: var(--ink-faint);
     margin-top: 5px;
   }
+  .char-count.warn { color: var(--red); font-weight: 700; }
 
-  /* 파일 첨부 */
   .file-drop {
+    display: block;
     border: 1.5px dashed var(--border-dashed);
     border-radius: var(--radius-sm);
     background: #fdfaf5;
@@ -156,6 +193,18 @@
   }
   .file-drop:hover { border-color: var(--red); background: #fdf6f0; }
   .file-drop input { display: none; }
+  .file-clear {
+    display: none;
+    margin-top: 7px;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .file-clear.visible { display: inline-block; }
 
   .two-col {
     display: grid;
@@ -180,13 +229,17 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background .15s;
+    transition: background .15s, opacity .15s;
   }
   .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:disabled { opacity: .55; cursor: not-allowed; }
 
   /* ── 결과 카드 ─────────────────────────── */
   .result-card { padding: 24px 26px 30px; }
   .result-card h2 { font-size: 16.5px; font-weight: 700; margin-bottom: 18px; }
+
+  .result-state { display: none; }
+  .result-state.active { display: block; }
 
   .result-empty {
     border: 1.5px dashed var(--border-dashed);
@@ -200,7 +253,133 @@
   }
   .result-empty strong { color: var(--ink-soft); }
 
-  /* ── 하단 특징 카드 ────────────────────── */
+  /* 로딩 (CASE 02) */
+  .loading-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: #fdfaf5;
+    padding: 30px 24px;
+    text-align: center;
+  }
+  .spinner {
+    width: 34px; height: 34px;
+    margin: 0 auto 14px;
+    border: 3px solid var(--border);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-step { font-size: 14px; font-weight: 700; }
+  .loading-note { margin-top: 6px; font-size: 12.5px; color: var(--ink-faint); }
+  .cancel-btn {
+    margin-top: 14px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 16px;
+    font-size: 12.5px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .cancel-btn:hover { border-color: var(--ink-faint); }
+
+  /* 실패 (CASE 04) */
+  .error-box {
+    border: 1px solid #e6c4be;
+    border-radius: var(--radius-md);
+    background: #fdf2f0;
+    padding: 24px;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .error-box b { display: block; color: var(--red); font-size: 14.5px; margin-bottom: 6px; }
+  .retry-btn {
+    margin-top: 14px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 9px 20px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .retry-btn:hover { background: var(--red-dark); }
+
+  /* 성공 (CASE 01) */
+  .draft-notice {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: #7a5a1e;
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+  .draft-preview {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: #fffdfa;
+    padding: 18px 18px;
+    font-size: 13px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+    max-height: 340px;
+    overflow-y: auto;
+    font-family: "Noto Serif KR", serif;
+  }
+  .basis { margin-top: 16px; }
+  .basis h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink-soft); }
+  .basis table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .basis th, .basis td {
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .basis th { background: #f7f2ea; font-weight: 700; white-space: nowrap; }
+
+  .adjust { margin-top: 16px; }
+  .adjust h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .chip:hover { border-color: var(--red); color: var(--red); }
+  .chip.undo { border-style: dashed; }
+
+  .result-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .download-btn {
+    flex: 1;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .download-btn:hover { background: var(--red-dark); }
+  .result-note { margin-top: 10px; font-size: 12px; color: var(--ink-faint); }
+
   .features {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -227,31 +406,47 @@
   <section class="hero">
     <h1>주제만 알려주세요.<br /><span class="accent">한글 문서</span>는 저희가 씁니다.</h1>
     <p>보고서·계획서를 서술식·유니코드 특수기호(□ ○ - ·) 규칙에 맞춰 자동으로 작성하고, 한글(HWP)에서 바로 열리는 <strong>HWPX 파일</strong>로 즉시 내려받을 수 있습니다.</p>
+
+    <!-- A-1: 기대치 2단 안내 -->
+    <div class="expectation">
+      <div class="col can">
+        <b>✓ 이 도구가 바로 해주는 것</b>
+        입력한 핵심 내용을 요약→배경→주요 내용→향후 계획 구조의 초안으로 재구성하고, 기호 규칙·서술식을 적용해 HWPX로 내려드립니다.
+      </div>
+      <div class="col human">
+        <b>✎ 담당자가 확인해야 하는 것</b>
+        생성물은 <u>초안</u>입니다. 수치·날짜·기관명 등 사실관계 확인과 결재·시행은 발행 기관 담당자의 검토를 거쳐야 합니다.
+      </div>
+    </div>
   </section>
 
   <div class="main-grid">
 
     <!-- 입력 카드 -->
-    <form class="card form-card" id="docForm">
+    <form class="card form-card" id="docForm" novalidate>
       <div class="form-header">📄 행정 보고서 · 계획안</div>
       <p class="form-desc">계획(안)·보고서·공문 등 내부 보고 문서. 요약 → 배경 → 주요 내용 → 향후 계획 구조로 작성됩니다.</p>
 
-      <div class="field">
+      <div class="field" id="fieldTitle">
         <label for="title">문서 제목 / 주제 <span class="req">*</span></label>
-        <input type="text" id="title" placeholder="예) AI 친화적 행정문서 작성 시범실시 계획(안)" required />
+        <input type="text" id="title" placeholder="예) AI 친화적 행정문서 작성 시범실시 계획(안)" />
+        <p class="field-error">문서 제목을 입력해 주세요. 예) 「○○ 시범실시 계획(안)」처럼 문서 종류까지 적으면 구조가 더 정확해집니다.</p>
       </div>
 
-      <div class="field">
+      <div class="field" id="fieldContent">
         <label for="content">핵심 내용 <span class="req">*</span><span class="opt-note">(누가/언제/무엇을/왜·배경·수치·일정 등을 자유롭게)</span></label>
-        <textarea id="content" maxlength="4000" placeholder="예) 공무원 1인당 하루 76분의 불필요 문서작업을 줄이기 위해 행정안전부 가이드라인을 솔선 적용. 2026년 3월 본부·소속기관 대면·온라인 병행 교육 실시. 대상 인원 약 3,000명. 담당: 혁신행정담당관실." required></textarea>
+        <textarea id="content" maxlength="4000" placeholder="예) 공무원 1인당 하루 76분의 불필요 문서작업을 줄이기 위해 행정안전부 가이드라인을 솔선 적용. 2026년 3월 본부·소속기관 대면·온라인 병행 교육 실시. 대상 인원 약 3,000명. 담당: 혁신행정담당관실."></textarea>
+        <p class="field-error">핵심 내용이 너무 짧습니다(20자 이상). <b>왜 하는지(배경)</b>, <b>무엇을 하는지</b>, <b>언제·누가</b> 중 두 가지 이상을 적어 주시면 충실한 초안이 나옵니다.</p>
         <div class="char-count"><span id="charNow">0</span> / 4000</div>
       </div>
 
-      <div class="field">
+      <div class="field" id="fieldFile">
         <label>참고 파일 첨부 (선택)<span class="opt-note">TXT · PDF · Word(DOCX) · 최대 10MB</span></label>
         <label class="file-drop" for="refFile">📎 <span id="fileLabel">파일 선택 (TXT / PDF / DOCX)</span>
           <input type="file" id="refFile" accept=".txt,.pdf,.docx" />
         </label>
+        <p class="field-error" id="fileError"></p>
+        <button type="button" class="file-clear" id="fileClear">첨부 취소</button>
       </div>
 
       <div class="two-col">
@@ -265,20 +460,80 @@
         </div>
       </div>
 
-      <button type="submit" class="submit-btn">✦ HWPX 문서 생성</button>
+      <button type="submit" class="submit-btn" id="submitBtn">✦ HWPX 문서 생성</button>
     </form>
 
-    <!-- 결과 카드 -->
-    <aside class="card result-card">
+    <!-- 결과 카드: 상태별 뷰 (CASE 01~05) -->
+    <aside class="card result-card" aria-live="polite">
       <h2>생성 결과</h2>
-      <div class="result-empty" id="resultBox">
-        왼쪽에서 주제와 핵심 내용을 입력한 뒤<br /><strong>‘HWPX 문서 생성’</strong>을 눌러 주세요.
+
+      <!-- 대기 -->
+      <div class="result-state active" id="stateIdle">
+        <div class="result-empty">
+          왼쪽에서 주제와 핵심 내용을 입력한 뒤<br /><strong>‘HWPX 문서 생성’</strong>을 눌러 주세요.<br /><br />
+          생성에는 보통 <strong>10~20초</strong>가 걸리며,<br />결과는 내려받기 전 이곳에서 미리 확인할 수 있습니다.
+        </div>
+      </div>
+
+      <!-- CASE 02: 로딩 -->
+      <div class="result-state" id="stateLoading">
+        <div class="loading-box">
+          <div class="spinner" role="status" aria-label="생성 중"></div>
+          <p class="loading-step" id="loadingStep">문서 구조를 분석하고 있습니다…</p>
+          <p class="loading-note">화면을 닫아도 입력 내용은 사라지지 않습니다.</p>
+          <button type="button" class="cancel-btn" id="cancelBtn">생성 취소</button>
+        </div>
+      </div>
+
+      <!-- CASE 04: 실패 -->
+      <div class="result-state" id="stateError">
+        <div class="error-box">
+          <b>문서 생성에 실패했습니다</b>
+          <span id="errorReason">일시적인 서버 연결 문제일 수 있습니다.</span><br />
+          입력하신 내용은 그대로 보존되어 있으니, 잠시 후 다시 시도해 주세요.
+          문제가 반복되면 핵심 내용을 나눠서(2,000자 이하) 시도해 보세요.
+          <br />
+          <button type="button" class="retry-btn" id="retryBtn">다시 시도</button>
+        </div>
+      </div>
+
+      <!-- CASE 01: 성공 -->
+      <div class="result-state" id="stateSuccess">
+        <!-- A-2: 초안 고지 + 최종 확정 주체 -->
+        <div class="draft-notice">
+          이 문서는 입력 내용을 규칙에 따라 재구성한 <b>초안(자동 생성물)</b>입니다.
+          수치·날짜·사실관계를 확인한 뒤 <b>발행 기관 담당자 검토·결재를 거쳐</b> 시행해 주세요.
+        </div>
+
+        <div class="draft-preview" id="draftPreview"></div>
+
+        <!-- A-2: 근거 표 -->
+        <div class="basis">
+          <h3>구성 근거 — 입력 내용이 어디에 반영되었나</h3>
+          <table>
+            <tbody id="basisRows"></tbody>
+          </table>
+        </div>
+
+        <!-- A-4: 보정 칩 + 되돌리기 -->
+        <div class="adjust">
+          <h3>마음에 안 드는 부분이 있나요? 한 번의 클릭으로 고칠 수 있습니다</h3>
+          <div class="chips">
+            <button type="button" class="chip" data-adjust="concise">더 간결하게</button>
+            <button type="button" class="chip" data-adjust="detailed">더 상세하게</button>
+            <button type="button" class="chip chip-undo undo" id="undoBtn" disabled>↩ 이전 버전으로</button>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" class="download-btn" id="downloadBtn">⬇ HWPX 내려받기</button>
+        </div>
+        <p class="result-note">※ 프로토타입에서는 TXT 초안이 내려받아집니다. HWPX 패키징은 API 연결 후 활성화됩니다.</p>
       </div>
     </aside>
 
   </div>
 
-  <!-- 하단 특징 -->
   <div class="features">
     <div class="card feature">
       <h3>서술식 자동 변환</h3>
@@ -297,25 +552,236 @@
 </div>
 
 <script>
-  const content = document.getElementById("content");
-  const charNow = document.getElementById("charNow");
-  content.addEventListener("input", () => {
-    charNow.textContent = content.value.length.toLocaleString();
+  // ── 요소 참조 ─────────────────────────────
+  const form = document.getElementById("docForm");
+  const titleInput = document.getElementById("title");
+  const contentInput = document.getElementById("content");
+  const orgInput = document.getElementById("org");
+  const contactInput = document.getElementById("contact");
+  const submitBtn = document.getElementById("submitBtn");
+  const charNowEl = document.getElementById("charNow");
+  const charCountEl = charNowEl.parentElement;
+
+  const states = {
+    idle: document.getElementById("stateIdle"),
+    loading: document.getElementById("stateLoading"),
+    error: document.getElementById("stateError"),
+    success: document.getElementById("stateSuccess"),
+  };
+
+  function setState(name) {
+    Object.values(states).forEach((el) => el.classList.remove("active"));
+    states[name].classList.add("active");
+    // CASE 05: 생성 중 중복 제출 차단
+    submitBtn.disabled = name === "loading";
+    submitBtn.textContent = name === "loading" ? "생성 중…" : "✦ HWPX 문서 생성";
+  }
+
+  // ── 글자 수 카운터 ────────────────────────
+  contentInput.addEventListener("input", () => {
+    const n = contentInput.value.length;
+    charNowEl.textContent = n.toLocaleString();
+    charCountEl.classList.toggle("warn", n >= 3800);
   });
 
+  // ── 파일 검증 (형식·10MB) + 첨부 취소 ──────
   const refFile = document.getElementById("refFile");
   const fileLabel = document.getElementById("fileLabel");
+  const fileField = document.getElementById("fieldFile");
+  const fileError = document.getElementById("fileError");
+  const fileClear = document.getElementById("fileClear");
+  const FILE_LABEL_DEFAULT = "파일 선택 (TXT / PDF / DOCX)";
+
   refFile.addEventListener("change", () => {
-    fileLabel.textContent = refFile.files.length
-      ? refFile.files[0].name
-      : "파일 선택 (TXT / PDF / DOCX)";
+    fileField.classList.remove("invalid");
+    if (!refFile.files.length) return resetFile();
+    const f = refFile.files[0];
+    const okType = /\.(txt|pdf|docx)$/i.test(f.name);
+    const okSize = f.size <= 10 * 1024 * 1024;
+    if (!okType || !okSize) {
+      fileError.textContent = !okType
+        ? `‘${f.name}’은 지원하지 않는 형식입니다. TXT·PDF·DOCX만 첨부할 수 있어요. HWP 파일은 한글에서 ‘다른 이름으로 저장 → DOCX’로 변환해 주세요.`
+        : `파일이 ${(f.size / 1024 / 1024).toFixed(1)}MB로 10MB를 넘습니다. 필요한 부분만 발췌한 파일로 다시 첨부해 주세요.`;
+      fileField.classList.add("invalid");
+      refFile.value = "";
+      fileLabel.textContent = FILE_LABEL_DEFAULT;
+      fileClear.classList.remove("visible");
+      return;
+    }
+    fileLabel.textContent = `${f.name} (${(f.size / 1024).toFixed(0)}KB)`;
+    fileClear.classList.add("visible");
   });
 
-  document.getElementById("docForm").addEventListener("submit", (e) => {
+  function resetFile() {
+    refFile.value = "";
+    fileLabel.textContent = FILE_LABEL_DEFAULT;
+    fileClear.classList.remove("visible");
+    fileField.classList.remove("invalid");
+  }
+  fileClear.addEventListener("click", resetFile);
+
+  // ── 입력 검증 (A-3: 막다른 골목 대신 안내) ──
+  function validate() {
+    let firstInvalid = null;
+    const fieldTitle = document.getElementById("fieldTitle");
+    const fieldContent = document.getElementById("fieldContent");
+
+    const titleOk = titleInput.value.trim().length > 0;
+    fieldTitle.classList.toggle("invalid", !titleOk);
+    if (!titleOk) firstInvalid = titleInput;
+
+    const contentOk = contentInput.value.trim().length >= 20;
+    fieldContent.classList.toggle("invalid", !contentOk);
+    if (!contentOk && !firstInvalid) firstInvalid = contentInput;
+
+    if (firstInvalid) firstInvalid.focus();
+    return !firstInvalid;
+  }
+  titleInput.addEventListener("input", () =>
+    document.getElementById("fieldTitle").classList.remove("invalid"));
+  contentInput.addEventListener("input", () =>
+    document.getElementById("fieldContent").classList.remove("invalid"));
+
+  // ── 초안 생성 (프로토타입: 클라이언트 조립) ──
+  // TODO: 실서비스에서는 이 함수를 생성 API 호출로 교체
+  function buildDraft(mode) {
+    const title = titleInput.value.trim();
+    const body = contentInput.value.trim();
+    const org = orgInput.value.trim();
+    const contact = contactInput.value.trim();
+
+    const sentences = body
+      .split(/(?<=[.!?다요임함음])\s+|\n+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const background = sentences[0] || "추진 배경을 입력 내용에서 확인할 수 없어 담당자 보완이 필요함";
+    let mains = sentences.slice(1);
+    if (!mains.length) mains = ["세부 추진 내용은 입력 내용을 바탕으로 담당자 보완이 필요함"];
+    if (mode === "concise") mains = mains.slice(0, 3);
+
+    const lines = [];
+    lines.push(`${title}`);
+    lines.push("");
+    lines.push("□ 요약");
+    lines.push(` ○ ${title.replace(/\(안\)$/, "")} 추진을 위한 주요 내용과 향후 계획을 정리함`);
+    lines.push("");
+    lines.push("□ 추진 배경");
+    lines.push(` ○ ${background}`);
+    lines.push("");
+    lines.push("□ 주요 내용");
+    mains.forEach((m) => lines.push(` ○ ${m}`));
+    if (mode === "detailed") {
+      lines.push("  - 세부 추진 일정·소요 예산은 관계 부서 협의를 거쳐 확정할 예정임");
+      lines.push("  - 추진 실적은 분기별로 점검하여 보완 사항을 반영함");
+    }
+    lines.push("");
+    lines.push("□ 향후 계획");
+    lines.push(" ○ 세부 일정은 발행 기관 검토 후 확정 예정임");
+    if (org || contact) {
+      lines.push("");
+      if (org) lines.push(`※ 발행: ${org}`);
+      if (contact) lines.push(`※ 담당: ${contact}`);
+    }
+    return lines.join("\n");
+  }
+
+  function renderBasis() {
+    const rows = [
+      ["문서 제목", "표제 및 ‘요약’ 항목의 문장 구성에 사용"],
+      ["핵심 내용 첫 문장", "‘추진 배경’ 항목에 배치"],
+      ["핵심 내용 나머지", "‘주요 내용’ 항목으로 분해·배치"],
+      ["기호 규칙", "□ → ○ → - 위계 적용 (규칙 기반, AI 판단 아님)"],
+      ["서술식 변환", "음슴체(~함/~임) 어미 적용 (규칙 기반)"],
+    ];
+    if (orgInput.value.trim() || contactInput.value.trim())
+      rows.push(["발행 기관·담당자", "문서 하단 ※ 표기에 반영"]);
+    document.getElementById("basisRows").innerHTML = rows
+      .map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`)
+      .join("");
+  }
+
+  // ── 생성 플로우 (CASE 01·02·04·05) ─────────
+  const LOADING_STEPS = [
+    "문서 구조를 분석하고 있습니다…",
+    "서술식 문장으로 변환하고 있습니다…",
+    "유니코드 기호 규칙을 적용하고 있습니다…",
+    "HWPX 템플릿으로 패키징하고 있습니다…",
+  ];
+  let loadingTimer = null;
+  let generateTimer = null;
+  const history = [];
+  const undoBtn = document.getElementById("undoBtn");
+  const draftPreview = document.getElementById("draftPreview");
+
+  function startGenerate() {
+    setState("loading");
+    let step = 0;
+    document.getElementById("loadingStep").textContent = LOADING_STEPS[0];
+    loadingTimer = setInterval(() => {
+      step = (step + 1) % LOADING_STEPS.length;
+      document.getElementById("loadingStep").textContent = LOADING_STEPS[step];
+    }, 1300);
+
+    // TODO: 실서비스에서는 fetch(생성 API)로 교체하고,
+    //       실패(catch) 시 showError(사유)를 호출
+    generateTimer = setTimeout(() => {
+      stopLoading();
+      history.length = 0;
+      undoBtn.disabled = true;
+      draftPreview.textContent = buildDraft("normal");
+      renderBasis();
+      setState("success");
+    }, 2600);
+  }
+
+  function stopLoading() {
+    clearInterval(loadingTimer);
+    clearTimeout(generateTimer);
+  }
+
+  function showError(reason) {
+    stopLoading();
+    document.getElementById("errorReason").textContent = reason;
+    setState("error");
+  }
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-    // TODO: 문서 생성 API 호출 지점 — 생성 로직을 붙일 자리
-    document.getElementById("resultBox").innerHTML =
-      "⏳ 문서 생성 로직이 아직 연결되지 않았습니다.<br />이곳에 생성된 HWPX 다운로드 링크가 표시됩니다.";
+    if (submitBtn.disabled) return; // CASE 05: 연타 차단
+    if (!validate()) return;        // A-3: 부실 입력 안내
+    startGenerate();
+  });
+
+  document.getElementById("cancelBtn").addEventListener("click", () => {
+    stopLoading();
+    setState("idle");
+  });
+
+  document.getElementById("retryBtn").addEventListener("click", startGenerate);
+
+  // ── 보정 칩 + 되돌리기 (A-4) ───────────────
+  document.querySelectorAll(".chip[data-adjust]").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      history.push(draftPreview.textContent);
+      undoBtn.disabled = false;
+      draftPreview.textContent = buildDraft(chip.dataset.adjust);
+    });
+  });
+  undoBtn.addEventListener("click", () => {
+    if (!history.length) return;
+    draftPreview.textContent = history.pop();
+    undoBtn.disabled = history.length === 0;
+  });
+
+  // ── 내려받기 (프로토타입: TXT) ──────────────
+  document.getElementById("downloadBtn").addEventListener("click", () => {
+    const blob = new Blob([draftPreview.textContent], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = (titleInput.value.trim() || "행정문서_초안") + ".txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
   });
 </script>
 </body>
