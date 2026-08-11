@@ -28,11 +28,20 @@ ai-service-ux 스킬 기준으로 작성. 화면: HWPX 문서 생성기 (단일 
 - 핵심 내용: 필수, 공백 제외 20자 이상, 최대 4,000자(3,800자부터 카운터 경고색)
 - 첨부 파일: .txt/.pdf/.docx만, 10MB 이하. 위반 시 사유 + 해결법 안내, 첨부 취소 버튼 제공
 
+## HWPX 다운로드 (클라이언트 생성)
+
+`<script id="hwpx-core">` 블록이 DOM 없이 동작하는 순수 함수로 HWPX를 브라우저에서 직접 조립한다.
+
+- OWPML(KS X 6101) 최소 구조: mimetype(무압축 선두) → version.xml → META-INF → content.hpf → header.xml → section0.xml → settings.xml → Preview/PrvText.txt
+- hwp-gov-doc-style 규칙 반영: 함초롬바탕 14pt·줄간격 160%·A4, 어절 줄바꿈(`breakNonLatinWord="BREAK_WORD"` — 반전 매핑), 글머리 내어쓰기(left=0, intent=-W; □·※=2100, ○·-=2800 HWPUNIT), linesegarray 미포함(한글이 재계산), 허용 기호(□○-※)만 사용
+- 검증: ZIP 정합성·전체 XML 파싱 통과, 스킬 `hwpx_polish.py` 실행 시 내어쓰기 "교정 0/보존 14" (규칙 일치 확인). 실제 한글(HWP) 열림 테스트는 사용자 환경에서 필요
+- TXT 다운로드는 보조 버튼으로 유지
+
 ## API 연결 시 교체 지점
 
 - `buildDraft()` → 생성 API 호출로 교체 (`startGenerate()` 내 TODO 주석)
 - 실패 시 `showError(사유)` 호출로 CASE 04 진입
-- 다운로드: TXT → HWPX 바이너리 응답으로 교체
+- AI 모델: 현재 미사용(전 과정 규칙 기반). 도입 시 LLM 5대 판단 기준 점검 후 결정
 
 ## 미결 항목 (다음 버전에서 "안 할 것"이 아니라 "아직 안 한 것")
 
