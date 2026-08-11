@@ -9,14 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
 <style>
   :root {
-    /* 연라일락 배경 + 흰 카드 + 세이지 그린 포인트 팔레트 */
-    --bg: #e9e6fb;
+    /* 웜 페이퍼(아이보리) 배경 + 흰 카드 + 세이지 그린 포인트 팔레트 */
+    --bg: #f0ede5;
     --card: #ffffff;
-    --border: #e3e0f5;
-    --border-dashed: #c9c3ee;
-    --ink: #17151f;
-    --ink-soft: #4a4757;
-    --ink-faint: #8b87a0;
+    --border: #e8e4da;
+    --border-dashed: #d6d0c2;
+    --ink: #1d1b16;
+    --ink-soft: #55524a;
+    --ink-faint: #98938a;
     --red: #1f1d2b;        /* 주 버튼·강조 (다크 차콜) */
     --red-dark: #000000;
     --red-soft: #4a4757;
@@ -33,7 +33,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: linear-gradient(175deg, #f1eefc 0%, var(--bg) 45%, #ddd7f6 100%);
+    background: linear-gradient(175deg, #f7f5ef 0%, var(--bg) 45%, #e5e0d3 100%);
     background-attachment: fixed;
     min-height: 100vh;
     color: var(--ink);
@@ -78,7 +78,7 @@
     background: var(--card);
     border: 1px solid rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-lg);
-    box-shadow: 0 10px 32px rgba(70, 58, 148, 0.10);
+    box-shadow: 0 10px 32px rgba(80, 72, 50, 0.10);
   }
 
   .form-card { padding: 22px 26px 26px; }
@@ -95,20 +95,20 @@
 
   input[type="text"], textarea {
     width: 100%;
-    border: 1px solid #dcd9ef;
+    border: 1px solid #ddd8cc;
     border-radius: var(--radius-sm);
-    background: #fbfbfe;
+    background: #fdfcf9;
     padding: 11px 13px;
     font-size: 14px;
     font-family: inherit;
     color: var(--ink);
     transition: border-color .15s, box-shadow .15s;
   }
-  input[type="text"]::placeholder, textarea::placeholder { color: #aaa6bd; }
+  input[type="text"]::placeholder, textarea::placeholder { color: #b0aca1; }
   input[type="text"]:focus, textarea:focus {
     outline: none;
-    border-color: #8f86e8;
-    box-shadow: 0 0 0 3px rgba(143, 134, 232, 0.18);
+    border-color: #5aa287;
+    box-shadow: 0 0 0 3px rgba(90, 162, 135, 0.18);
   }
   textarea { min-height: 170px; resize: vertical; }
 
@@ -134,7 +134,7 @@
     display: block;
     border: 1.5px dashed var(--border-dashed);
     border-radius: var(--radius-sm);
-    background: #f8f7fd;
+    background: #faf8f3;
     padding: 15px;
     text-align: center;
     font-size: 13.5px;
@@ -142,7 +142,7 @@
     cursor: pointer;
     transition: border-color .15s, background .15s;
   }
-  .file-drop:hover { border-color: #8f86e8; background: #f2f0fc; }
+  .file-drop:hover { border-color: #5aa287; background: #f2f6f2; }
   .file-drop input { display: none; }
   .file-clear {
     display: none;
@@ -195,7 +195,7 @@
   .result-empty {
     border: 1.5px dashed var(--border-dashed);
     border-radius: var(--radius-md);
-    background: #f8f7fd;
+    background: #faf8f3;
     padding: 46px 28px;
     text-align: center;
     font-size: 13.5px;
@@ -208,7 +208,7 @@
   .loading-box {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    background: #f8f7fd;
+    background: #faf8f3;
     padding: 30px 24px;
     text-align: center;
   }
@@ -296,7 +296,7 @@
     text-align: left;
     vertical-align: top;
   }
-  .basis th { background: #f2f0fc; font-weight: 700; white-space: nowrap; }
+  .basis th { background: #f3f0e9; font-weight: 700; white-space: nowrap; }
 
   .adjust { margin-top: 16px; }
   .adjust h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink-soft); }
