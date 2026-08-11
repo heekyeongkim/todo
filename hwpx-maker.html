@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
 <style>
   :root {
-    /* 라벤더 배경 + 흰 카드 + 세이지 그린 포인트 팔레트 */
-    --bg: #bdb6f2;
+    /* 연라일락 배경 + 흰 카드 + 세이지 그린 포인트 팔레트 */
+    --bg: #e9e6fb;
     --card: #ffffff;
     --border: #e3e0f5;
     --border-dashed: #c9c3ee;
@@ -33,7 +33,9 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
+    background: linear-gradient(175deg, #f1eefc 0%, var(--bg) 45%, #ddd7f6 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
     color: var(--ink);
     font-family: "Noto Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
     line-height: 1.6;
@@ -74,9 +76,9 @@
 
   .card {
     background: var(--card);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.95);
     border-radius: var(--radius-lg);
-    box-shadow: 0 8px 26px rgba(52, 44, 118, 0.13);
+    box-shadow: 0 10px 32px rgba(70, 58, 148, 0.10);
   }
 
   .form-card { padding: 22px 26px 26px; }
