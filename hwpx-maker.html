@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HWPX 문서 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #faf6f0;
+    --card: #ffffff;
+    --border: #e8e0d4;
+    --border-dashed: #d8cfc0;
+    --ink: #1f1a14;
+    --ink-soft: #5c554b;
+    --ink-faint: #918a7e;
+    --red: #b52a2a;
+    --red-dark: #9e2222;
+    --red-soft: #a04b3b;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --radius-sm: 9px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    line-height: 1.6;
+    padding: 40px 24px 64px;
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; }
+
+  /* ── 상단 배지 ─────────────────────────── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+  .badge .dot { color: var(--red); font-size: 14px; }
+
+  /* ── 히어로 ────────────────────────────── */
+  .hero h1 {
+    font-family: "Noto Serif KR", "Nanum Myeongjo", serif;
+    font-weight: 900;
+    font-size: clamp(30px, 4.6vw, 46px);
+    line-height: 1.28;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 .accent { color: var(--red); }
+  .hero p {
+    margin-top: 16px;
+    max-width: 720px;
+    font-size: 15.5px;
+    color: var(--ink-soft);
+  }
+  .hero p strong { color: var(--ink); }
+
+  /* ── 메인 그리드 ───────────────────────── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 26px;
+    align-items: start;
+    margin-top: 34px;
+  }
+  @media (max-width: 860px) { .main-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 10px rgba(90, 70, 40, 0.05);
+  }
+
+  /* ── 입력 카드 ─────────────────────────── */
+  .form-card { padding: 22px 26px 26px; }
+
+  .form-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7f2ea;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 11px 16px;
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+
+  .form-desc {
+    margin: 16px 2px 4px;
+    font-size: 13.5px;
+    color: var(--red-soft);
+  }
+
+  .field { margin-top: 18px; }
+  .field label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  .field label .req { color: var(--red); }
+  .field label .opt-note { font-weight: 400; color: var(--ink-faint); font-size: 12.5px; margin-left: 4px; }
+
+  input[type="text"], textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #fffdfa;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input[type="text"]::placeholder, textarea::placeholder { color: #b3aa9c; }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(181, 42, 42, 0.1);
+  }
+  textarea { min-height: 170px; resize: vertical; }
+
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 5px;
+  }
+
+  /* 파일 첨부 */
+  .file-drop {
+    border: 1.5px dashed var(--border-dashed);
+    border-radius: var(--radius-sm);
+    background: #fdfaf5;
+    padding: 15px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .file-drop:hover { border-color: var(--red); background: #fdf6f0; }
+  .file-drop input { display: none; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 24px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 15.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background .15s;
+  }
+  .submit-btn:hover { background: var(--red-dark); }
+
+  /* ── 결과 카드 ─────────────────────────── */
+  .result-card { padding: 24px 26px 30px; }
+  .result-card h2 { font-size: 16.5px; font-weight: 700; margin-bottom: 18px; }
+
+  .result-empty {
+    border: 1.5px dashed var(--border-dashed);
+    border-radius: var(--radius-md);
+    background: #fdfaf5;
+    padding: 46px 28px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+  }
+  .result-empty strong { color: var(--ink-soft); }
+
+  /* ── 하단 특징 카드 ────────────────────── */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 56px;
+  }
+  @media (max-width: 860px) { .features { grid-template-columns: 1fr; } }
+
+  .feature { padding: 20px 22px; }
+  .feature h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .feature p { font-size: 13.5px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="badge"><span class="dot">❋</span> 행정안전부 「AI 시대 행정문서 작성 가이드라인」 준수</div>
+
+  <section class="hero">
+    <h1>주제만 알려주세요.<br /><span class="accent">한글 문서</span>는 저희가 씁니다.</h1>
+    <p>보고서·계획서를 서술식·유니코드 특수기호(□ ○ - ·) 규칙에 맞춰 자동으로 작성하고, 한글(HWP)에서 바로 열리는 <strong>HWPX 파일</strong>로 즉시 내려받을 수 있습니다.</p>
+  </section>
+
+  <div class="main-grid">
+
+    <!-- 입력 카드 -->
+    <form class="card form-card" id="docForm">
+      <div class="form-header">📄 행정 보고서 · 계획안</div>
+      <p class="form-desc">계획(안)·보고서·공문 등 내부 보고 문서. 요약 → 배경 → 주요 내용 → 향후 계획 구조로 작성됩니다.</p>
+
+      <div class="field">
+        <label for="title">문서 제목 / 주제 <span class="req">*</span></label>
+        <input type="text" id="title" placeholder="예) AI 친화적 행정문서 작성 시범실시 계획(안)" required />
+      </div>
+
+      <div class="field">
+        <label for="content">핵심 내용 <span class="req">*</span><span class="opt-note">(누가/언제/무엇을/왜·배경·수치·일정 등을 자유롭게)</span></label>
+        <textarea id="content" maxlength="4000" placeholder="예) 공무원 1인당 하루 76분의 불필요 문서작업을 줄이기 위해 행정안전부 가이드라인을 솔선 적용. 2026년 3월 본부·소속기관 대면·온라인 병행 교육 실시. 대상 인원 약 3,000명. 담당: 혁신행정담당관실." required></textarea>
+        <div class="char-count"><span id="charNow">0</span> / 4000</div>
+      </div>
+
+      <div class="field">
+        <label>참고 파일 첨부 (선택)<span class="opt-note">TXT · PDF · Word(DOCX) · 최대 10MB</span></label>
+        <label class="file-drop" for="refFile">📎 <span id="fileLabel">파일 선택 (TXT / PDF / DOCX)</span>
+          <input type="file" id="refFile" accept=".txt,.pdf,.docx" />
+        </label>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="org">발행 기관 (선택)</label>
+          <input type="text" id="org" placeholder="예) 행정안전부 혁신행정담당관실" />
+        </div>
+        <div class="field">
+          <label for="contact">담당자 (선택)</label>
+          <input type="text" id="contact" placeholder="예) 홍길동 사무관 044-000-0000" />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">✦ HWPX 문서 생성</button>
+    </form>
+
+    <!-- 결과 카드 -->
+    <aside class="card result-card">
+      <h2>생성 결과</h2>
+      <div class="result-empty" id="resultBox">
+        왼쪽에서 주제와 핵심 내용을 입력한 뒤<br /><strong>‘HWPX 문서 생성’</strong>을 눌러 주세요.
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- 하단 특징 -->
+  <div class="features">
+    <div class="card feature">
+      <h3>서술식 자동 변환</h3>
+      <p>개조식 대신 주어·서술어를 갖춘 음슴체(~함/~임) 문장으로 자동 정리합니다.</p>
+    </div>
+    <div class="card feature">
+      <h3>유니코드 기호 규칙</h3>
+      <p>□ → ○ → - → · 위계와 실제 유니코드 문자를 사용해 AI가 인식 가능한 문서를 만듭니다.</p>
+    </div>
+    <div class="card feature">
+      <h3>한글에서 바로 열림</h3>
+      <p>함초롬바탕 서식이 반영된 HWPX 템플릿으로 패키징되어 한글(HWP)에서 즉시 열립니다.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const content = document.getElementById("content");
+  const charNow = document.getElementById("charNow");
+  content.addEventListener("input", () => {
+    charNow.textContent = content.value.length.toLocaleString();
+  });
+
+  const refFile = document.getElementById("refFile");
+  const fileLabel = document.getElementById("fileLabel");
+  refFile.addEventListener("change", () => {
+    fileLabel.textContent = refFile.files.length
+      ? refFile.files[0].name
+      : "파일 선택 (TXT / PDF / DOCX)";
+  });
+
+  document.getElementById("docForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    // TODO: 문서 생성 API 호출 지점 — 생성 로직을 붙일 자리
+    document.getElementById("resultBox").innerHTML =
+      "⏳ 문서 생성 로직이 아직 연결되지 않았습니다.<br />이곳에 생성된 HWPX 다운로드 링크가 표시됩니다.";
+  });
+</script>
+</body>
+</html>
