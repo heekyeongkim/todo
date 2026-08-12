@@ -1,6 +1,6 @@
 # 한글 보고서 초안 생성기 (HWPX)
 
-핵심 내용을 입력하면 Claude가 행정문서 원고(마크다운)를 작성하고,
+핵심 내용을 입력하면 Gemini(무료 API)가 행정문서 원고(마크다운)를 작성하고,
 레포 루트의 `hwp-writing-assistant/` 스킬 파이프라인이 한글(HWP)에서
 바로 열리는 HWPX 파일로 조판한다.
 
@@ -8,7 +8,7 @@
 
 ```
 사용자 입력 (제목·핵심 내용·첨부 TXT/PDF/DOCX)
-   ↓ llm.py          — Claude가 스킬 입력 마크업 원고(md)만 생성 (HWPX는 만들지 않음)
+   ↓ llm.py          — Gemini가 스킬 입력 마크업 원고(md)만 생성 (HWPX는 만들지 않음)
    ↓ core.py         — check_numbers 검증 → 오류 시 LLM 되먹임 재수정(최대 2회)
    ↓ pipeline.py     — build_hwpx → hwpx_polish (스킬 스크립트를 수정 없이 호출)
    ↓                    ※ hwpx_polish 생략 금지(글자 겹침), hwpx_shifttab은 서버에서 미호출
@@ -22,13 +22,19 @@
 
 ## 실행
 
+**Windows에서 가장 쉬운 방법:** `hwpx-web/start.bat` 더블클릭.
+(Python 설치 필요. 첫 실행 때 패키지를 설치하고 Gemini API 키를 물어본 뒤,
+브라우저가 자동으로 열린다. 키는 `gemini_api_key.txt`에 저장되어 다음부터 안 묻는다.)
+
+터미널로 직접 실행하려면:
+
 ```bash
 pip install -r hwpx-web/requirements.txt
-export ANTHROPIC_API_KEY=...      # 또는 `ant auth login` 프로필
+export GEMINI_API_KEY=...         # https://aistudio.google.com/apikey 에서 무료 발급
 python hwpx-web/server.py         # http://localhost:8765
 ```
 
-모델은 기본 `claude-opus-5` 이며 `HWPX_LLM_MODEL` 환경변수로 바꿀 수 있다.
+모델은 기본 `gemini-2.5-flash`(무료 등급)이며 `HWPX_LLM_MODEL` 환경변수로 바꿀 수 있다.
 
 ## 검증 (API 키 불필요)
 

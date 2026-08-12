@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
-"""원고 생성 LLM 호출부 (Claude).
+"""원고 생성 LLM 호출부 (Google Gemini — 무료 등급 API 키 사용).
 
 LLM은 최종 HWPX를 만들지 않는다 — hwp-writing-assistant 스킬의 입력 마크업
 형식으로 된 md 원고만 생성하고, 파일은 pipeline.py(스킬 파이프라인)가 만든다.
+
+API 키: https://aistudio.google.com/apikey 에서 무료 발급 →
+        환경변수 GEMINI_API_KEY 로 설정 (google-genai SDK가 자동으로 읽는다).
 """
 import os
 import re
 
-import anthropic
+from google import genai
+from google.genai import types
 
-MODEL = os.environ.get("HWPX_LLM_MODEL", "claude-opus-5")
+# 무료 등급에서 쓸 수 있는 기본 모델. HWPX_LLM_MODEL 환경변수로 변경 가능.
+MODEL = os.environ.get("HWPX_LLM_MODEL", "gemini-2.5-flash")
 
 # hwp-writing-assistant/SKILL.md 의 규칙을 원고 생성 프롬프트로 옮긴 것.
 SYSTEM_PROMPT = """\
@@ -72,7 +77,8 @@ ADJUST_INSTRUCTIONS = {
 
 
 def _client():
-    return anthropic.Anthropic()
+    # GEMINI_API_KEY(또는 GOOGLE_API_KEY) 환경변수를 자동으로 읽는다
+    return genai.Client()
 
 
 def _strip_fences(text):
@@ -81,20 +87,18 @@ def _strip_fences(text):
     return m.group(1).strip() if m else text
 
 
-def _call(messages):
-    response = _client().beta.messages.create(
+def _call(user_text):
+    response = _client().models.generate_content(
         model=MODEL,
-        max_tokens=8000,
-        system=SYSTEM_PROMPT,
-        messages=messages,
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
+        contents=user_text,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            max_output_tokens=8192,
+        ),
     )
-    if response.stop_reason == "refusal":
-        raise RuntimeError("LLM이 요청을 거절했습니다. 입력 내용을 바꿔 다시 시도해 주세요.")
-    text = "".join(b.text for b in response.content if b.type == "text")
-    if not text.strip():
-        raise RuntimeError("LLM 응답이 비어 있습니다.")
+    text = response.text
+    if not text or not text.strip():
+        raise RuntimeError("LLM 응답이 비어 있습니다. 잠시 후 다시 시도해 주세요.")
     return _strip_fences(text)
 
 
@@ -102,19 +106,13 @@ def generate_manuscript(title, content, attachment_text=None):
     user = f"[문서 제목]\n{title}\n\n[핵심 내용]\n{content}"
     if attachment_text:
         user += f"\n\n[참고 파일 내용 — 원고 재료로 활용]\n{attachment_text[:30000]}"
-    return _call([{"role": "user", "content": user}])
+    return _call(user)
 
 
 def fix_manuscript(manuscript, check_report):
-    return _call([{
-        "role": "user",
-        "content": FIX_PROMPT.format(report=check_report, manuscript=manuscript),
-    }])
+    return _call(FIX_PROMPT.format(report=check_report, manuscript=manuscript))
 
 
 def adjust_manuscript(manuscript, mode):
     instruction = ADJUST_INSTRUCTIONS[mode]
-    return _call([{
-        "role": "user",
-        "content": f"{instruction}\n\n[원고]\n{manuscript}",
-    }])
+    return _call(f"{instruction}\n\n[원고]\n{manuscript}")

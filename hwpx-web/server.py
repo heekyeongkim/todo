@@ -2,7 +2,7 @@
 """한글 보고서 초안 생성기 — 웹 서버.
 
 실행:
-    export ANTHROPIC_API_KEY=...   # 또는 `ant auth login` 프로필
+    export GEMINI_API_KEY=...      # https://aistudio.google.com/apikey (무료 발급)
     pip install -r requirements.txt
     python server.py               # http://localhost:8765
 """
